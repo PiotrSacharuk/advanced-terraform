@@ -35,6 +35,16 @@ resource "google_compute_firewall" "default" {
   source_tags = var.compute-source-tags
 }
 
+## BUCKETS
+resource "google_storage_bucket" "environment-buckets" {
+  for_each = toset(var.environment_list)
+  name     = "${lower(each.key)}+${var.project-id}"
+  location = var.region
+  versioning {
+    enabled = true
+  }
+}
+
 ### COMPUTE
 ## NGINX PROXY
 resource "google_compute_instance" "nginx_instance" {
