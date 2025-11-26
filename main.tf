@@ -60,9 +60,9 @@ resource "google_compute_instance" "nginx_instance" {
   }
 }
 
-## WEB1
-resource "google_compute_instance" "web1" {
-  name         = "web1"
+resource "google_compute_instance" "web-instances" {
+  count = 3
+  name         = "web${count.index}"
   labels = {
     environment = var.environment_map[var.target_environment]
   }
@@ -76,44 +76,6 @@ resource "google_compute_instance" "web1" {
 
   network_interface {
     # A default network is created for all GCP projects
-    network = data.google_compute_network.default.self_link
-    subnetwork = google_compute_subnetwork.subnet-1.self_link
-  }
-}
-## WEB2
-resource "google_compute_instance" "web2" {
-  name         = "web2"
-  labels = {
-    environment = var.environment_map[var.target_environment]
-  }
-  machine_type = var.environment_machine_type[var.target_environment]
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-11"
-    }
-  }
-
-  network_interface {
-    network = data.google_compute_network.default.self_link
-    subnetwork = google_compute_subnetwork.subnet-1.self_link
-  }
-}
-## WEB3
-resource "google_compute_instance" "web3" {
-  name         = "web3"
-  labels = {
-    environment = var.environment_map[var.target_environment]
-  }
-  machine_type = var.environment_machine_type[var.target_environment]
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-11"
-    }
-  }
-
-  network_interface {
     network = data.google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
   }
@@ -137,26 +99,4 @@ resource "google_compute_instance" "mysqldb" {
     network = data.google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
   }
-}
-
-resource "random_id" "db_name_suffix" {
-  byte_length = 4
-}
-
-resource "google_sql_database_instance" "cloudsql" {
-  name             = "web-app-db-${random_id.db_name_suffix.hex}"
-  database_version = "MYSQL_8_0"
-  region           = var.region
-
-  settings {
-    tier = "db-f1-micro"
-  }
-  deletion_protection = false
-}
-
-## CLOUD SQL USER
-resource "google_sql_user" "users" {
-  name     = var.dbusername
-  instance = google_sql_database_instance.cloudsql.name
-  password = var.dbpassword
 }
