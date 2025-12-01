@@ -1,6 +1,6 @@
 module "vm_instance_template" {
   source       = "terraform-google-modules/vm/google//modules/instance_template"
-  version      = "7.9.0"
+  version      = "~> 7.12.0"
   project_id   = var.project-id
   machine_type = "e2-micro"
   subnetwork = google_compute_subnetwork.subnet-1.name
@@ -12,7 +12,7 @@ module "vm_instance_template" {
 
 module "vm_mig" {
     source               = "terraform-google-modules/vm/google//modules/mig"
-    version              = "7.9.0"
+    version              = "~> 7.12.0"
     project_id           = var.project-id
     region               = var.region
     hostname             = "web-server"
