@@ -41,3 +41,9 @@ variable "qa-main-branch" {
     type = string
     default = "master_qa"
 }
+
+variable "create_oauth_client" {
+    description = "Set to true to create a new OAuth client, false to use existing one"
+    type        = bool
+    default     = false
+}
